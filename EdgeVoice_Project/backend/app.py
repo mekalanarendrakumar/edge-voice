@@ -270,4 +270,5 @@ def download_mfcc():
     return send_file(io.BytesIO(buf.read().encode()), as_attachment=True, download_name='mfcc.csv', mimetype='text/csv')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
