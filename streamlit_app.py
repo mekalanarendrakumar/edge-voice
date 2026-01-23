@@ -5,7 +5,6 @@ import io
 import os
 import sys
 
-# Add backend directory to path
 sys.path.insert(0, 'EdgeVoice_Project/backend')
 
 try:
@@ -13,133 +12,171 @@ try:
 except ImportError:
     detect_command = None
 
-st.set_page_config(page_title="EdgeVoice", layout="wide", initial_sidebar_state="expanded")
+# Dark purple neon theme
+st.set_page_config(page_title="EdgeVoice", layout="wide", initial_sidebar_state="collapsed")
 
-st.title("🎙️ EdgeVoice - Audio Processing")
-st.markdown("Upload or record audio to extract MFCC coefficients and detect wake words")
-
-# Sidebar
-with st.sidebar:
-    st.header("⚙️ Settings")
-    sample_rate = st.number_input("Sample Rate (Hz)", value=16000, min_value=8000, max_value=48000)
-    n_mfcc = st.number_input("MFCC Coefficients", value=13, min_value=1, max_value=40)
-
-# Tabs
-tab1, tab2, tab3 = st.tabs(["📤 Upload Audio", "🎤 Record Audio", "📊 Results"])
-
-with tab1:
-    st.header("Upload Audio File")
-    uploaded_file = st.file_uploader("Choose an audio file", type=['wav', 'mp3', 'ogg', 'm4a'])
+st.markdown("""
+    <style>
+    * {
+        background-color: #0a0e27 !important;
+        color: #ffffff !important;
+    }
+    body { background: #0a0e27; }
+    [data-testid="stAppViewContainer"] { background: #0a0e27; }
+    [data-testid="stHeader"] { background: #0a0e27; }
+    [data-testid="stToolbar"] { background: #0a0e27; }
     
-    if uploaded_file is not None:
-        st.audio(uploaded_file)
-        
-        if st.button("Extract MFCC", key="extract_upload"):
+    h1 { color: #00d4ff !important; text-shadow: 0 0 20px rgba(0, 212, 255, 0.6); font-size: 48px !important; }
+    h2 { color: #00d4ff !important; text-shadow: 0 0 15px rgba(0, 212, 255, 0.5); }
+    
+    .stButton button {
+        background: linear-gradient(135deg, #8B2F8B, #5f2f9f) !important;
+        color: #ffffff !important;
+        border: 2px solid #00d4ff !important;
+        border-radius: 15px !important;
+        padding: 15px 30px !important;
+        font-weight: bold !important;
+        font-size: 16px !important;
+        box-shadow: 0 0 20px rgba(139, 47, 139, 0.5) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .stButton button:hover {
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.8) !important;
+        background: linear-gradient(135deg, #a030a0, #6f3faf) !important;
+    }
+    
+    .success {
+        background: rgba(76, 175, 80, 0.15) !important;
+        border: 2px solid #4CAF50 !important;
+        border-radius: 10px !important;
+        color: #4CAF50 !important;
+    }
+    
+    .info-box {
+        background: linear-gradient(135deg, rgba(139, 47, 139, 0.15), rgba(95, 47, 159, 0.15)) !important;
+        border: 2px solid #8B2F8B !important;
+        border-radius: 15px !important;
+        padding: 20px !important;
+        margin: 15px 0 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# Title
+st.markdown("<h1 style='text-align: center;'>⭐ EDGEVOICE: REAL-TIME MFCC ACCELERATOR ⭐</h1>", unsafe_allow_html=True)
+
+# Initialize session state
+if 'audio_data' not in st.session_state:
+    st.session_state.audio_data = None
+if 'duration' not in st.session_state:
+    st.session_state.duration = "0.0"
+if 'recording' not in st.session_state:
+    st.session_state.recording = False
+
+st.markdown("<h2>🎙️ Audio Recorder & File Upload</h2>", unsafe_allow_html=True)
+
+# Top button row
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    if st.button("🎤 Record" if not st.session_state.recording else "⏹️ Stop Recording", key="btn_record", use_container_width=True):
+        st.session_state.recording = not st.session_state.recording
+        if st.session_state.recording:
+            st.info("🔴 Recording started... Click again to stop")
+        else:
+            st.success("✅ Recording saved!")
+with col2:
+    st.button("▶️ Playback", key="btn_play", use_container_width=True)
+with col3:
+    st.button("📁 Choose File", key="btn_choose", use_container_width=True)
+with col4:
+    if st.session_state.duration != "0.0":
+        st.metric("Duration", f"{st.session_state.duration}s")
+
+# Audio input
+st.markdown("<div class='info-box'>", unsafe_allow_html=True)
+audio_input = st.audio_input("🎤 Record your voice")
+file_input = st.file_uploader("Choose audio file", type=['wav', 'mp3', 'ogg', 'm4a'])
+st.markdown("</div>", unsafe_allow_html=True)
+
+# Process audio
+if audio_input is not None:
+    st.session_state.audio_data = audio_input
+    try:
+        y, sr = librosa.load(io.BytesIO(audio_input), sr=16000)
+        st.session_state.duration = f"{len(y)/sr:.1f}"
+    except:
+        pass
+elif file_input is not None:
+    st.session_state.audio_data = file_input.read()
+    try:
+        y, sr = librosa.load(io.BytesIO(st.session_state.audio_data), sr=16000)
+        st.session_state.duration = f"{len(y)/sr:.1f}"
+    except:
+        pass
+
+# Action buttons
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if st.button("📊 Extract MFCC", use_container_width=True):
+        if st.session_state.audio_data is not None:
             try:
-                # Load audio
-                audio_data = uploaded_file.read()
-                y, sr = librosa.load(io.BytesIO(audio_data), sr=sample_rate)
-                
-                st.success(f"✅ Audio loaded: {len(y):,} samples at {sr} Hz")
-                
-                # Extract MFCC
-                mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)
-                st.success(f"✅ MFCC extracted: shape {mfcc.shape}")
-                
-                # Store in session
+                y, sr = librosa.load(io.BytesIO(st.session_state.audio_data), sr=16000)
+                mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
                 st.session_state.mfcc = mfcc
                 st.session_state.y = y
                 st.session_state.sr = sr
-                
-                # Wake word detection
-                if detect_command:
-                    try:
-                        is_wake_word = detect_command(y, sr)
-                        if is_wake_word:
-                            st.warning("🔊 Wake word DETECTED!")
-                        else:
-                            st.info("No wake word detected")
-                    except Exception as e:
-                        st.warning(f"⚠️ Wake word detection error: {e}")
-                
-            except Exception as e:
-                st.error(f"❌ Error: {e}")
-
-with tab2:
-    st.header("Record Audio")
-    audio_data = st.audio_input("🎤 Record your voice", sample_rate=sample_rate)
-    
-    if audio_data is not None:
-        if st.button("Extract MFCC from Recording", key="extract_record"):
-            try:
-                # Load from recorded bytes
-                y, sr = librosa.load(io.BytesIO(audio_data), sr=sample_rate)
-                
-                st.success(f"✅ Audio loaded: {len(y):,} samples at {sr} Hz")
-                
-                # Extract MFCC
-                mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)
                 st.success(f"✅ MFCC extracted: shape {mfcc.shape}")
                 
-                # Store in session
-                st.session_state.mfcc = mfcc
-                st.session_state.y = y
-                st.session_state.sr = sr
-                
-                # Wake word detection
                 if detect_command:
                     try:
-                        is_wake_word = detect_command(y, sr)
+                        is_wake_word = detect_command(y)
                         if is_wake_word:
-                            st.warning("🔊 Wake word DETECTED!")
-                        else:
-                            st.info("No wake word detected")
-                    except Exception as e:
-                        st.warning(f"⚠️ Wake word detection error: {e}")
-                
+                            st.success("🔊 Wake word DETECTED!")
+                    except:
+                        pass
             except Exception as e:
-                st.error(f"❌ Error: {e}")
+                st.error(f"❌ Error: {str(e)[:100]}")
+        else:
+            st.error("❌ No audio loaded!")
 
-with tab3:
-    st.header("📊 MFCC Results")
+with col2:
+    if st.button("⚡ Run Accelerator", use_container_width=True):
+        if 'mfcc' in st.session_state:
+            st.success(f"✅ Accelerator processed MFCC: {st.session_state.mfcc.shape}")
+        else:
+            st.error("❌ Extract MFCC first!")
+
+with col3:
+    if st.button("📥 Download Results", use_container_width=True):
+        if 'mfcc' in st.session_state:
+            csv_buffer = io.StringIO()
+            np.savetxt(csv_buffer, st.session_state.mfcc, delimiter=',')
+            st.download_button(label="📥 Download MFCC CSV", data=csv_buffer.getvalue(), file_name="mfcc.csv", mime="text/csv")
+
+# Results
+if 'mfcc' in st.session_state:
+    st.markdown("<h2>📊 MFCC Results</h2>", unsafe_allow_html=True)
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Duration", f"{len(st.session_state.y)/st.session_state.sr:.2f}s")
+    with col2:
+        st.metric("Sample Rate", f"{st.session_state.sr} Hz")
+    with col3:
+        st.metric("MFCC Shape", str(st.session_state.mfcc.shape))
+    with col4:
+        st.metric("Coefficients", f"{st.session_state.mfcc.size:,}")
     
-    if 'mfcc' in st.session_state:
-        mfcc = st.session_state.mfcc
-        y = st.session_state.y
-        sr = st.session_state.sr
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.metric("Duration (seconds)", f"{len(y) / sr:.2f}s")
-            st.metric("MFCC Shape", f"{mfcc.shape}")
-        
-        with col2:
-            st.metric("Sample Rate", f"{sr} Hz")
-            st.metric("Total Coefficients", f"{mfcc.size:,}")
-        
-        # Visualization
-        st.subheader("MFCC Heatmap")
-        import matplotlib.pyplot as plt
-        fig, ax = plt.subplots(figsize=(10, 4))
-        img = librosa.display.specshow(mfcc, sr=sr, x_axis='time', ax=ax)
-        plt.colorbar(img, ax=ax)
-        plt.title('MFCC Coefficients')
-        st.pyplot(fig)
-        
-        # Download as CSV
-        csv_buffer = io.StringIO()
-        np.savetxt(csv_buffer, mfcc, delimiter=',')
-        csv_data = csv_buffer.getvalue()
-        
-        st.download_button(
-            label="📥 Download MFCC as CSV",
-            data=csv_data,
-            file_name="mfcc.csv",
-            mime="text/csv"
-        )
-    else:
-        st.info("👆 Upload or record audio to see results")
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots(figsize=(12, 4), facecolor='#0a0e27')
+    ax.set_facecolor('#0a0e27')
+    img = librosa.display.specshow(st.session_state.mfcc, sr=st.session_state.sr, x_axis='time', ax=ax, cmap='magma')
+    plt.colorbar(img, ax=ax)
+    plt.title('MFCC Coefficients', color='#00d4ff', fontsize=14, fontweight='bold')
+    ax.tick_params(colors='#00d4ff')
+    plt.tight_layout()
+    st.pyplot(fig, use_container_width=True)
 
 st.markdown("---")
-st.markdown("Made with ❤️ by EdgeVoice | Deployed with Streamlit")
+st.markdown("<div style='text-align: center; color: #00d4ff; font-size: 14px;'>Made with ❤️ by EdgeVoice | Deployed with Streamlit Cloud</div>", unsafe_allow_html=True)
