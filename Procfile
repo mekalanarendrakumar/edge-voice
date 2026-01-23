@@ -1,1 +1,1 @@
-web: python EdgeVoice_Project/backend/app.py
+web: cd EdgeVoice_Project/backend && gunicorn app:app

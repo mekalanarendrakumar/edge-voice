@@ -1,0 +1,13 @@
+services:
+  # Backend API Service
+  - type: web
+    name: edgevoice-backend
+    runtime: python
+    buildCommand: pip install -r EdgeVoice_Project/backend/requirements.txt
+    startCommand: cd EdgeVoice_Project/backend && python app.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: PORT
+        value: 10000
+    plan: free
