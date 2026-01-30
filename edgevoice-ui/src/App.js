@@ -91,7 +91,11 @@ function App() {
     }
     const formData = new FormData();
     formData.append('audio', audioFile);
-    const backendUrls = ['http://127.0.0.1:5000/upload', 'http://localhost:5000/upload'];
+    const backendUrls = [
+      'https://edge-voice.onrender.com/upload',
+      'http://127.0.0.1:5000/upload',
+      'http://localhost:5000/upload'
+    ];
     let lastErr = null;
 
     for (const url of backendUrls) {
