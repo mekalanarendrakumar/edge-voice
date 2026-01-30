@@ -8,6 +8,20 @@ import time
 import json
 import traceback
 
+# Validate critical dependencies at startup
+print("🔍 Validating dependencies...")
+try:
+    import librosa
+    import numpy as np
+    import soundfile
+    print(f"✓ librosa {librosa.__version__}")
+    print(f"✓ numpy {np.__version__}")
+    print(f"✓ soundfile {soundfile.__version__}")
+except ImportError as e:
+    print(f"❌ Missing dependency: {e}")
+    print("Please run: pip install -r requirements.txt")
+    exit(1)
+
 app = Flask(__name__)
 # Enable wide-open CORS for local file:// usage (no credentials needed)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -25,10 +39,8 @@ def add_cors_headers(response):
 def handle_error(e):
     # Print to server log for debugging
     print('Unhandled exception:', e)
-    return jsonify({'error': str(e)}), 500
-
-import librosa
-import numpy as np
+    traceback.print_exc()
+    return jsonify({'error': str(e), 'type': type(e).__name__}), 500
 
 # --- CORS Helper Function ---
 def handle_cors_preflight():
@@ -38,6 +50,37 @@ def handle_cors_preflight():
     response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response, 200
+
+# --- Health Check Endpoint ---
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Simple health check endpoint to verify backend is running"""
+    return jsonify({
+        'status': 'healthy',
+        'service': 'EdgeVoice Backend',
+        'version': '1.0',
+        'librosa_version': librosa.__version__,
+        'numpy_version': np.__version__,
+        'timestamp': time.time()
+    })
+
+@app.route('/', methods=['GET'])
+def index():
+    """Root endpoint with API information"""
+    return jsonify({
+        'service': 'EdgeVoice Backend API',
+        'version': '1.0',
+        'endpoints': {
+            '/health': 'GET - Health check',
+            '/upload': 'POST - Upload audio and extract MFCC',
+            '/stream_mfcc': 'POST - Stream audio chunks for real-time MFCC',
+            '/wakeword_detect': 'POST - Detect wake word in audio',
+            '/accelerate': 'POST - Hardware accelerator simulation',
+            '/download_wav': 'GET - Download recorded audio',
+            '/download_mfcc': 'GET - Download MFCC data'
+        },
+        'status': 'running'
+    })
 
 # --- Real-time MFCC and Wake Word Detection ---
 import io

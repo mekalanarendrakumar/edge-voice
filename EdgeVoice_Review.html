@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EdgeVoice Project Review - Q1 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .presentation {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            min-height: 600px;
+            padding: 60px;
+            animation: fadeIn 0.5s;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Title Slide */
+        .slide-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .slide-title h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .slide-title .subtitle {
+            font-size: 1.8em;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+
+        .slide-title .date {
+            font-size: 1.2em;
+            opacity: 0.8;
+        }
+
+        /* Content Slides */
+        .slide h2 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+        }
+
+        .slide h3 {
+            font-size: 1.5em;
+            color: #764ba2;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .slide p, .slide li {
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .slide ul {
+            margin-left: 40px;
+        }
+
+        .slide li {
+            margin-bottom: 12px;
+        }
+
+        /* Rating Display */
+        .rating {
+            font-size: 2em;
+            color: #ffc107;
+            margin: 20px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 5px 5px 5px 0;
+            font-size: 0.95em;
+        }
+
+        .badge.success {
+            background: #28a745;
+        }
+
+        .badge.warning {
+            background: #ffc107;
+            color: black;
+        }
+
+        .badge.danger {
+            background: #dc3545;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1em;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #f4f4f4;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            overflow-x: auto;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: #f8f9fa;
+            border-top: 1px solid #ddd;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #764ba2;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            font-size: 1.1em;
+            color: #666;
+            font-weight: bold;
+        }
+
+        /* Two Column Layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .col-header {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .metric {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .metric-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 1.8em;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide slide-title active">
+            <h1>🎙️ EdgeVoice</h1>
+            <div class="subtitle">Real-Time Speech AI System</div>
+            <div class="subtitle">Project Review</div>
+            <div class="date">January 28, 2026</div>
+        </div>
+
+        <!-- Slide 2: Overview -->
+        <div class="slide">
+            <h2>📋 Project Overview</h2>
+            <h3>What is EdgeVoice?</h3>
+            <ul>
+                <li>Real-time, on-device speech AI system</li>
+                <li>Wake-word detection & smart device control</li>
+                <li>Dual frontend implementation (Vanilla JS + React)</li>
+                <li>Python Flask backend with librosa audio processing</li>
+            </ul>
+            <h3>Key Components</h3>
+            <ul>
+                <li><span class="icon">⚙️</span>Backend: Flask + NumPy + librosa + SciPy</li>
+                <li><span class="icon">🎨</span>Frontend 1: Vanilla JS (lightweight, no-build)</li>
+                <li><span class="icon">⚛️</span>Frontend 2: React 18 (modern, scalable)</li>
+            </ul>
+            <div class="rating">Overall Rating: ⭐⭐⭐⭐ (4/5)</div>
+        </div>
+
+        <!-- Slide 3: Strengths -->
+        <div class="slide">
+            <h2>✅ Project Strengths</h2>
+            <div class="metric">
+                <div class="metric-title">1. Well-Structured Architecture</div>
+                <div>Clean separation between backend and frontends; dual implementations available</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">2. Comprehensive Audio Processing</div>
+                <div>Industry-standard MFCC extraction with multi-format support (WAV, MP3, OGG)</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">3. Good Frontend Implementation</div>
+                <div>Rich visualizations with Plotly.js, responsive design, export capabilities</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">4. CORS-Enabled & Well-Documented</div>
+                <div>Handles file:// origins properly; multiple README and guide files</div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Critical Issues -->
+        <div class="slide">
+            <h2>🔴 Critical Issues</h2>
+            <div class="metric">
+                <div class="metric-title">1. Wake-Word Detection Too Simplistic</div>
+                <div>Uses energy-based heuristic, always returns 'light_on' if voice detected</div>
+                <div style="margin-top: 10px; color: #dc3545;"><strong>Impact:</strong> Not production-ready</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">2. Security Gaps</div>
+                <div>No authentication, file size validation, or input sanitization</div>
+                <div style="margin-top: 10px; color: #dc3545;"><strong>Impact:</strong> Vulnerable to abuse</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">3. Code Quality Issues</div>
+                <div>script.js is 1,230 lines; should be modularized</div>
+                <div style="margin-top: 10px; color: #dc3545;"><strong>Impact:</strong> Difficult to maintain</div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Recommendations Priority 1 -->
+        <div class="slide">
+            <h2>🎯 Recommendations - HIGH PRIORITY</h2>
+            <div class="metric">
+                <div class="metric-title">1. Implement ML-Based Wake Word Detection</div>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>Replace energy-based algorithm with CNN/RNN classifier</li>
+                    <li>Consider pre-trained models: Porcupine, Snowboy</li>
+                    <li>Add real confidence scoring</li>
+                    <li>Train on multiple wake-word samples</li>
+                </ul>
+            </div>
+            <div class="metric">
+                <div class="metric-title">2. Add Security Hardening</div>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>Implement API authentication/authorization</li>
+                    <li>Add file size validation (max 10MB)</li>
+                    <li>Sanitize error messages</li>
+                    <li>Add rate limiting on endpoints</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: Recommendations Priority 2 -->
+        <div class="slide">
+            <h2>🎯 Recommendations - MEDIUM PRIORITY</h2>
+            <div class="metric">
+                <div class="metric-title">3. Add Unit Tests</div>
+                <div>Backend: pytest for MFCC extraction, command detection<br>Frontend: Jest for React components</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">4. Refactor Frontend Code</div>
+                <div>Split script.js into modules: recorder.js, mfcc-processor.js, ui.js</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">5. Performance Optimization</div>
+                <div>Add caching for MFCC results, compression for data transmission</div>
+            </div>
+            <div class="metric">
+                <div class="metric-title">6. API Documentation</div>
+                <div>Create OpenAPI/Swagger documentation for all endpoints</div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Technology Stack -->
+        <div class="slide">
+            <h2>🛠️ Technology Stack Assessment</h2>
+            <table>
+                <tr>
+                    <th>Component</th>
+                    <th>Technology</th>
+                    <th>Rating</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td>Backend</td>
+                    <td>Flask</td>
+                    <td>⭐⭐⭐⭐</td>
+                    <td>Lightweight, perfect for this use</td>
+                </tr>
+                <tr>
+                    <td>Audio Processing</td>
+                    <td>librosa</td>
+                    <td>⭐⭐⭐⭐⭐</td>
+                    <td>Industry standard, excellent</td>
+                </tr>
+                <tr>
+                    <td>Frontend 1</td>
+                    <td>Vanilla JS</td>
+                    <td>⭐⭐⭐⭐</td>
+                    <td>Good for simple cases</td>
+                </tr>
+                <tr>
+                    <td>Frontend 2</td>
+                    <td>React 18</td>
+                    <td>⭐⭐⭐⭐</td>
+                    <td>Modern, scalable</td>
+                </tr>
+                <tr>
+                    <td>Styling</td>
+                    <td>Tailwind CSS</td>
+                    <td>⭐⭐⭐⭐</td>
+                    <td>Utilities-first, good choice</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 8: Deployment Readiness -->
+        <div class="slide">
+            <h2>🚀 Deployment Readiness</h2>
+            <h3>Current Status: <span class="badge warning">DEVELOPMENT/PROTOTYPE</span></h3>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td>Code Quality</td>
+                    <td>🟡</td>
+                    <td>Works but needs refactoring</td>
+                </tr>
+                <tr>
+                    <td>Testing</td>
+                    <td>🔴</td>
+                    <td>No tests present</td>
+                </tr>
+                <tr>
+                    <td>Documentation</td>
+                    <td>🟢</td>
+                    <td>Good - multiple guides</td>
+                </tr>
+                <tr>
+                    <td>Security</td>
+                    <td>🔴</td>
+                    <td>No auth, validation, rate limiting</td>
+                </tr>
+                <tr>
+                    <td>Performance</td>
+                    <td>🟡</td>
+                    <td>No caching or optimization</td>
+                </tr>
+            </table>
+            <p style="margin-top: 20px; color: #dc3545;"><strong>⚠️ Recommendation:</strong> Safe for local/internal use only. Needs hardening before public deployment.</p>
+        </div>
+
+        <!-- Slide 9: Code Quality Review -->
+        <div class="slide">
+            <h2>🔍 Code Quality Review</h2>
+            <h3>✅ Good Practices</h3>
+            <ul>
+                <li>Proper error handling with try-catch blocks throughout</li>
+                <li>Descriptive error messages (e.g., FFmpeg missing)</li>
+                <li>Global error handler middleware</li>
+                <li>CORS preflight handling for file:// origins</li>
+            </ul>
+            <h3>⚠️ Areas to Improve</h3>
+            <ul>
+                <li>No file size validation on uploads</li>
+                <li>Hardcoded values (n_mfcc=13) should be configurable</li>
+                <li>script.js is monolithic (1,230 lines)</li>
+                <li>Missing unit tests for critical paths</li>
+            </ul>
+        </div>
+
+        <!-- Slide 10: Next Steps -->
+        <div class="slide">
+            <h2>📝 Immediate Next Steps</h2>
+            <div class="metric">
+                <div class="metric-title">Phase 1 (Weeks 1-2): Foundation</div>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>Replace wake-word detection with ML model</li>
+                    <li>Add authentication and input validation</li>
+                    <li>Add file size limits to backend</li>
+                </ul>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Phase 2 (Weeks 3-4): Quality</div>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>Add unit tests (pytest + Jest)</li>
+                    <li>Refactor script.js into modules</li>
+                    <li>Document REST API with Swagger</li>
+                </ul>
+            </div>
+            <div class="metric">
+                <div class="metric-title">Phase 3 (Ongoing): Growth</div>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>Add database for audio persistence</li>
+                    <li>Implement multi-command classifier</li>
+                    <li>Performance optimization & caching</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 11: Q&A -->
+        <div class="slide">
+            <h2>❓ Questions for the Team</h2>
+            <ul>
+                <li><strong>Wake Words:</strong> Which wake words should be supported? (e.g., "Hey Assistant", "Alexa", etc.)</li>
+                <li><strong>Hardware:</strong> Is FPGA MFCC acceleration planned? (mentioned in docs)</li>
+                <li><strong>Commands:</strong> What devices should be controllable? (lights, fans, etc.)</li>
+                <li><strong>Performance:</strong> What are latency and throughput requirements?</li>
+                <li><strong>Scale:</strong> Local network only or cloud deployment?</li>
+                <li><strong>Timeline:</strong> When is production deployment targeted?</li>
+            </ul>
+        </div>
+
+        <!-- Slide 12: Conclusion -->
+        <div class="slide">
+            <h2>🎯 Conclusion</h2>
+            <h3>Summary</h3>
+            <p><strong>EdgeVoice has excellent architecture and solid fundamentals.</strong></p>
+            <ul>
+                <li>✅ Well-designed dual-frontend approach</li>
+                <li>✅ Clean backend with good use of audio libraries</li>
+                <li>✅ Comprehensive documentation</li>
+                <li>⚠️ Wake-word detection needs ML upgrade</li>
+                <li>⚠️ Security hardening required before production</li>
+            </ul>
+            <div style="margin-top: 40px; text-align: center;">
+                <div style="font-size: 1.5em; color: #ffc107;">⭐⭐⭐⭐ (4/5)</div>
+                <p style="margin-top: 20px; font-size: 1.2em; color: #667eea;"><strong>Ready for next development phase with recommendations implemented</strong></p>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">12</span></span>
+            <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            
+            if (n > totalSlides) {
+                currentSlide = totalSlides;
+            } else if (n < 1) {
+                currentSlide = 1;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+            
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        // Initialize
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

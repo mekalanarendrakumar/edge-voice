@@ -489,11 +489,13 @@ window.extractMFCC = async function extractMFCC(event) {
     // If all attempts failed
     const errorMsg = lastError ? lastError.message : 'Unknown error';
     statusDiv.textContent = 'Error extracting MFCC: ' + errorMsg + '. Please ensure backend is running on 127.0.0.1:5000 or localhost:5000.';
+    statusDiv.style.color = '#ff6b6b';
     console.error('All backend URLs failed. Last error:', lastError);
     throw new Error(errorMsg);
   } catch (err) {
-    console.error(err);
-    alert("MFCC extraction failed");
+    console.error('MFCC Extraction Error:', err);
+    const errorDetails = err.message || err.toString();
+    alert(`MFCC extraction failed!\n\nError: ${errorDetails}\n\nPlease check:\n1. Backend server is running (port 5000)\n2. Audio file is valid\n3. Console for details (F12)`);
   } finally {
     extractMfccBtn.style.display = 'inline-block';
   }
@@ -637,12 +639,6 @@ function showStats(stats, shape) {
 function showRealtimeOutput(mfcc, stats) {
   if (!mfcc) return;
   // This function is no longer used - panels are now shown in correct order
-}
-
-// DEPRECATED: drawMfccCoefficientsChart - no longer used in new layout
-function drawMfccCoefficientsChart(container, mfcc, wakeRange) {
-  // This function is deprecated - replaced with simpler heatmap display
-  return;
 }
 
 function drawWaveformAnalysis(canvas, mfcc, wakeRange, color) {
